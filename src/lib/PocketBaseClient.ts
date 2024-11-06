@@ -20,7 +20,7 @@ class PocketBaseClient {
 
 	public async authenticate(email: string, password: string): Promise<void> {
 		try {
-			const response = await fetch(`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/admins/auth-with-password`, {
+			const response = await fetch(`${dbUrlClient}/api/admins/auth-with-password`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

@@ -16,7 +16,7 @@ interface QRCodeItem {
   mode: string;
   qr_code_text: string;
 }
-
+ 
 interface RealtimeQRCodesProps {
   initialQRCodes: QRCodeItem[] | DynamicData[];
   collection: string;
