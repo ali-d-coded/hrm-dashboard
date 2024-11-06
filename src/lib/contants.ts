@@ -1,6 +1,6 @@
 
 const dbUrl = process.env.DBURL
-const dbUrlClient = 'http://127.0.0.1:5996'
+const dbUrlClient = 'http://45.159.221.50:5996'
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 

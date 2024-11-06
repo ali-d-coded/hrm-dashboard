@@ -8,7 +8,7 @@ export default async function Dashboard() {
 
   return (
     <div className="">
-      <RealtimeQRCodes initialQRCodes={qrs} />
+      <RealtimeQRCodes initialQRCodes={qrs} collection="qr_code" />
     </div>
   );
 }
