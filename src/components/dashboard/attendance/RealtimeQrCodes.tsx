@@ -10,13 +10,13 @@ import PocketBase from "pocketbase";
 
 // Initialize PocketBase
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-
+pb.autoCancellation(false);
 interface QRCodeItem {
   id: string;
   mode: string;
   qr_code_text: string;
 }
- 
+
 interface RealtimeQRCodesProps {
   initialQRCodes: QRCodeItem[] | DynamicData[];
   collection: string;
