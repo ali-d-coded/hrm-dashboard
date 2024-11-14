@@ -25,8 +25,8 @@ class PocketBaseAdminClient {
 
 			try {
 				const authData = await this.pb.admins.authWithPassword(
-					ADMIN_EMAIL as string,
-					ADMIN_PASSWORD as string
+					ADMIN_EMAIL || process.env.NEXT_PUBLIC_ADMIN_EMAIL as string,
+					ADMIN_PASSWORD || process.env.NEXT_PUBLIC_ADMIN_PASSWORD as string
 				);
 				this.authData = authData.token;
 				this.isAuthenticated = true;
