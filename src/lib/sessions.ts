@@ -5,7 +5,7 @@ import { SessionPayload } from './definitions'
 import { cookies } from 'next/headers'
 
 
-const secretKey = process.env.SESSION_SECRET
+const secretKey = process.env.SESSION_SECRET || "MMhOdxJlRBajqPDRl98lCfOSpE30EM0S580y+qxhkC0="
 const encodedKey = new TextEncoder().encode(secretKey)
 
 export async function encrypt(payload: SessionPayload) {
