@@ -1,5 +1,8 @@
-import { ADMIN_EMAIL, ADMIN_PASSWORD, dbUrl } from '@/lib/contants';
 import PocketBase from 'pocketbase';
+
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'ashcorp.hr@gmail.com';
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'Hr.ash@corp1';
+const DB_URL = process.env.NEXT_PUBLIC_DB_URL || 'https://ash-hrm-pocketbase.appii.space';
 
 class PocketBaseAdminClient {
 	private static instance: PocketBaseAdminClient;
@@ -9,7 +12,7 @@ class PocketBaseAdminClient {
 	private tokenExpiry: number | null = null;
 
 	private constructor() {
-		this.pb = new PocketBase(dbUrl);
+		this.pb = new PocketBase(DB_URL);
 	}
 
 	public static getInstance(): PocketBaseAdminClient {
@@ -19,31 +22,33 @@ class PocketBaseAdminClient {
 		return PocketBaseAdminClient.instance;
 	}
 
-	public async authenticate(): Promise<void> {
+	public async authenticate(retryCount = 3): Promise<void> {
 		if (!this.isAuthenticated || this.isTokenExpired()) {
 			console.log({ ADMIN_EMAIL, ADMIN_PASSWORD });
 
-			try {
-				const authData = await this.pb.admins.authWithPassword(
-					ADMIN_EMAIL || process.env.NEXT_PUBLIC_ADMIN_EMAIL as string,
-					ADMIN_PASSWORD || process.env.NEXT_PUBLIC_ADMIN_PASSWORD as string
-				);
-				this.authData = authData.token;
-				this.isAuthenticated = true;
+			while (retryCount > 0) {
+				try {
+					const authData = await this.pb.admins.authWithPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
+					this.authData = authData.token;
+					this.isAuthenticated = true;
+					this.tokenExpiry = Date.now() + 14 * 24 * 60 * 60 * 1000; // Token expiry set to 14 days
 
-				// Set token expiry time (14 days from now)
-				this.tokenExpiry = Date.now() + 14 * 24 * 60 * 60 * 1000;
-			} catch (error) {
-				console.error('Failed to authenticate admin:', error);
-				throw error;
+					return; // Exit on success
+				} catch (error) {
+					console.error('Failed to authenticate admin:', error);
+					retryCount -= 1;
+					if (retryCount === 0) {
+						throw new Error('Authentication failed after multiple attempts');
+					}
+					await new Promise(res => setTimeout(res, 1000)); // Optional: Add delay before retry
+				}
 			}
 		}
 	}
 
 	private isTokenExpired(): boolean {
 		if (!this.authData || !this.tokenExpiry) return true;
-		const currentTime = Date.now();
-		return currentTime >= this.tokenExpiry;
+		return Date.now() >= this.tokenExpiry;
 	}
 
 	public getClient(): PocketBase {
