@@ -71,7 +71,7 @@ export default function RealtimeQRCodes({
   const prevQRTextRef = useRef<string>("");
 
   useEffect(() => {
-    const unsubscribe = pb.collection(collection).subscribe("*", async (e) => {
+    pb.collection(collection).subscribe("*", async (e) => {
       try {
         setIsUpdating(true);
         switch (e.action) {
@@ -105,8 +105,7 @@ export default function RealtimeQRCodes({
     });
 
     return () => {
-      //@ts-expect-error fjdfjksfhsdlkj
-      unsubscribe();
+      pb.collection(collection).unsubscribe("*");
     };
   }, [collection]);
 
